@@ -10,6 +10,7 @@ services:
   web:
     build: .
     env_file: .env
+    restart: always
     volumes:
       - .:/app
     ports:
