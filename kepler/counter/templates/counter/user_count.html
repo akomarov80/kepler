@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kepler - User Counter</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #166088;
+            --light: #f0f4f8;
+            --dark: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        h1 {
+            color: var(--secondary);
+            margin-bottom: 30px;
+        }
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(74, 111, 165, 0.3);
+        }
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(74, 111, 165, 0.4);
+        }
+        .count-display {
+            font-size: 28px;
+            margin: 25px 0;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        .nav-links {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .nav-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Kepler, {{ user.username }}!</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn">Count Users</button>
+        </form>
+
+        {% if count is not None %}
+            <div class="count-display">Total users: {{ count }}</div>
+        {% endif %}
+
+        <div class="nav-links">
+            <a href="{% url 'admin:index' %}" class="nav-link">Admin Panel</a>
+        </div>
+    </div>
+</body>
+</html>
