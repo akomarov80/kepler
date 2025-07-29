@@ -10,5 +10,5 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 # RUN python ./kepler/manage.py collectstatic --noinput
-RUN
-CMD ["sh", "-c", "python ./kepler/manage.py runserver 0.0.0.0:8000"]
+
+CMD ["sh", "-c", "python ./kepler/manage.py migrate && python ./kepler/manage.py runserver 0.0.0.0:8000"]
