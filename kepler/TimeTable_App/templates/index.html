@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+  </head>
+
+  <body>
+
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"> </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Исходные данные</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'calculation' %}">Результат</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+
+  <div class="container-mt-3" style="margin-left: 0px">
+      <div class="row">
+          <div class="col-md-8" style="width: 1300px">
+              <!-- Предметы -->
+              <div class="card md" style="width: 50rem;">
+                  <div class="card-body">
+                      <h5 class="card-title">Предметы</h5>
+                      <table class="table table-info table-striped">
+                          <tr>
+                              <th scope="col"> Название предмета</th>
+                              <th scope="col"> Лекций в неделю</th>
+                              <th scope="col"> Семинаров в неделю</th>
+                              <th scope="col"> Лаб. работ в неделю</th>
+                          </tr>
+                          {% for item in subjects %}
+                          <tr>
+                              <td>{{item.title}}</td>
+                              <td>{{item.lectures}}</td>
+                              <td>{{item.studies}}</td>
+                              <td>{{item.praktical_work}}</td>
+                          </tr>
+                          <!--  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                          <a href="#" class="card-link">Card link</a> -->
+                          {% endfor %}
+                      </table>
+                  </div>
+              </div>
+
+              <!-- Преподаватели -->
+              <div class="card md" style="width: 50rem;">
+                  <div class="card-body">
+                      <h5 class="card-title">Преподаватели</h5>
+                      <table class="table table-success table-striped">
+                          <tr>
+                              <th scope="col"> Преподаватель</th>
+                              <th scope="col"> Название предмета</th>
+                              <th scope="col"> Ведение лекций</th>
+                              <th scope="col"> Ведение семинаров</th>
+                              <th scope="col"> Ведение лаб. работ</th>
+                              <th scope="col"> Методические дни</th>
+                          </tr>
+                          {% for item in teachers %}
+                          <tr>
+                              <td>{{item.name}}</td>
+                              <td>{{item.subject.title}}</td>
+                              <td>{{item.lectures}}</td>
+                              <td>{{item.studies}}</td>
+                              <td>{{item.praktical_work}}</td>
+                              <td>
+                                  {% if item.available_on_monday == False %} Пн {% endif %}
+                                  {% if item.available_on_tuesday == False %} Вт {% endif %}
+                                  {% if item.available_on_wednesday == False %} Ср {% endif %}
+                                  {% if item.available_on_thursday == False %} Чт {% endif %}
+                                  {% if item.available_on_friday == False %} Пт {% endif %}
+                              </td>
+                          </tr>
+                          <!--  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                          <a href="#" class="card-link">Card link</a> -->
+                          {% endfor %}
+                      </table>
+                  </div>
+              </div>
+
+              <!-- Аудитории -->
+              <div class="card md" style="width: 50rem;">
+                  <div class="card-body">
+                      <h5 class="card-title">Аудитории</h5>
+                      <table class="table table-warning table-striped">
+                          <tr>
+                              <th scope="col"> Номер</th>
+                              <th scope="col"> Ведение лекций</th>
+                              <th scope="col"> Ведение семинаров</th>
+                              <th scope="col"> Ведение лаб. работ</th>
+                              <th scope="col"> Доступна</th>
+                          </tr>
+                          {% for item in classrooms %}
+                          <tr>
+                              <td>{{item.number}}</td>
+                              <td>{{item.lectures}}</td>
+                              <td>{{item.studies}}</td>
+                              <td>{{item.praktical_work}}</td>
+                              <td>
+                                  {% if item.available_on_monday == True %} Пн {% endif %}
+                                  {% if item.available_on_tuesday == True %} Вт {% endif %}
+                                  {% if item.available_on_wednesday == True %} Ср {% endif %}
+                                  {% if item.available_on_thursday == True %} Чт {% endif %}
+                                  {% if item.available_on_friday == True %} Пт {% endif %}
+                              </td>
+                          </tr>
+                          <!--  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                          <a href="#" class="card-link">Card link</a> -->
+                          {% endfor %}
+                      </table>
+                  </div>
+              </div>
+
+
+          </div>
+      </div>
+  </div>
+
+
+
+  </body>
+</html>

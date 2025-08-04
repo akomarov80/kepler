@@ -1,0 +1,49 @@
+from django.db import models
+from django.forms import ModelForm
+
+class Subjects(models.Model):
+    title          = models.CharField(max_length=150, db_index=True, verbose_name='Название предмета')
+    lectures       = models.SmallIntegerField(blank=True, verbose_name='Кол-во лекций в неделю')
+    studies        = models.SmallIntegerField(blank=True, verbose_name='Кол-во семинаров в неделю')
+    praktical_work = models.SmallIntegerField(blank=True, verbose_name='Кол-во лабораторных работ в неделю')
+    hardness       = models.SmallIntegerField(blank=True, verbose_name='Сложность')
+
+    class Meta:
+        verbose_name=        'Предмет'
+        verbose_name_plural= 'Предметы'
+        ordering= ['id']
+
+class Teachers(models.Model):
+    name           = models.CharField(max_length=150, verbose_name='имя учителя')
+    subject        = models.ForeignKey('Subjects', on_delete=models.PROTECT, null=True, verbose_name='Название предмета')
+    lectures       = models.BooleanField(blank=True, verbose_name='Может ли проводить лекции')
+    studies        = models.BooleanField(blank=True, verbose_name='Может ли проводить семинары')
+    praktical_work = models.BooleanField(blank=True, verbose_name='Может ли проводить лабораторные работы')
+    available_on_monday    = models.BooleanField(blank=True, verbose_name='доступен в пн')
+    available_on_tuesday   = models.BooleanField(blank=True, verbose_name='доступен в вт')
+    available_on_wednesday = models.BooleanField(blank=True, verbose_name='доступен в ср')
+    available_on_thursday  = models.BooleanField(blank=True, verbose_name='доступен в чт')
+    available_on_friday    = models.BooleanField(blank=True, verbose_name='доступен в пт')
+
+    class Meta:
+        verbose_name=        'Преподаватель'
+        verbose_name_plural= 'Преподаватели'
+        ordering= ['id']
+
+
+class Classrooms(models.Model):
+    number         = models.SmallIntegerField(blank=True, verbose_name='номер аудитории')
+    lectures       = models.BooleanField(blank=True, verbose_name='Можно ли проводить лекции')
+    studies        = models.BooleanField(blank=True, verbose_name='Можно ли проводить семинары')
+    praktical_work = models.BooleanField(blank=True, verbose_name='Можно ли проводить лабораторные работы')
+    available_on_monday    = models.BooleanField(blank=True, verbose_name='доступна в пн')
+    available_on_tuesday   = models.BooleanField(blank=True, verbose_name='доступна в вт')
+    available_on_wednesday = models.BooleanField(blank=True, verbose_name='доступна в ср')
+    available_on_thursday  = models.BooleanField(blank=True, verbose_name='доступна в чт')
+    available_on_friday    = models.BooleanField(blank=True, verbose_name='доступна в пт')
+
+    class Meta:
+        verbose_name=        'Аудитория'
+        verbose_name_plural= 'Аудитории'
+        ordering= ['id']
+
