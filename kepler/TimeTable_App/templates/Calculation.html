@@ -1,28 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Test</title>
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" rel="stylesheet">
 </head>
 <body>
 
 <div class="container text-center m-4 p-4" style="width: 400px;">
     <!--<div style="grid-template-columns: 1fr 1fr;" class="d-grid gap-0 row-gap-3">-->
-    <div class="row">
-        <div class="col-my-4 p-4">
-            <h6> Выбор количества групп </h6>
-            <select class="form-select" aria-label="Выбор количества групп">
-                <option selected>Выбор количества групп</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </select>
 
-        </div>
-    </div>
     <div class="row">
         <div class="col-my-4" style="height: 80px;">
         </div>
@@ -31,23 +20,42 @@
         <div class="col-my-4 p-4">
             <!--            <a href="#" class="btn btn-primary active" role="button" data-bs-toggle="button" aria-pressed="true">-->
             <!--                Рассчитать расписание</a>-->
-            <form action={% url 'calculation' %} method="post">
+            <form action="{% url 'test_view' %}" autocomplete="off" method="post">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-primary active" >Рассчитать расписание</button>
+                <input name="groups_number" placeholder="Введите количество групп" type="text">
+                <button type="submit">Отправить</button>
             </form>
-
-            {% if count is not None %}
-            <div class="count-display">Результат расчета: {{ count }}</div>
-            {% endif %}
-
+        </div>
+    </div>
+    <div class="card md" style="width: 50rem;">
+        <div class="card-body">
+            <h5 class="card-title">Расписание</h5>
+            {% for group_week_ttable in adapted_ttable %} <!-- Для количества групп-->
+            <div class="card-body">
+                <table class="table table-warning table-striped">
+                    <tr>
+                        <th scope="col"> Понедельник</th>
+                        <th scope="col"> Вторник</th>
+                        <th scope="col"> Среда</th>
+                        <th scope="col"> Четверг</th>
+                        <th scope="col"> Пятница</th>
+                    </tr>
+                    {% for gr_day_ttable in group_week_ttable %}
+                    <tr>
+                        {% for lesson in gr_day_ttable %}
+                        <td>{{lesson}}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+<script crossorigin="anonymous"
         integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
-        crossorigin="anonymous"></script>
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
