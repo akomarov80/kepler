@@ -145,6 +145,13 @@ class TimeTableProblem:
                         subjectsNumber[subject.id + subjectShift] += 1
                     elif group[i] == subject.id  + double_subjectShift:
                         subjectsNumber[subject.id + double_subjectShift] += 1
+                    lesson_id = group[i]
+                    if 1 <= lesson_id <= subjects_count:
+                        subjectsNumber[lesson_id] += 1
+                    elif subjectShift < lesson_id <= 2 * subjects_shift:
+                        subjectsNumber[lesson_id] += 1
+                    elif 2 * subjectShift < lesson_id <= 3 * subjects_shift:
+                        subjectsNumber[lesson_id] += 1
                 #print(len(group)," ",subject.id," ", subject.id + subjectShift, " ", subject.id + double_subjectShift, " ", len(Subjects.objects.all()))
                 #print(subjectsNumber)
                 if subjectsNumber[subject.id] != subject.lectures:
@@ -173,6 +180,12 @@ class TimeTableProblem:
                     for i in range(0, len(group1)):
                         if group1[i] * group2[i] != 0:
                             violations += 1
+        groups_list = list(groupTtableDict.values())
+        for i, group1 in enumerate(groups_list):
+            for group2 in groups_list[i+1:]:
+                for j in range(len(group1)):
+                    if group1[j] and group2[j]:
+                        violations += 1
 
         return violations
 
@@ -194,6 +207,13 @@ class TimeTableProblem:
                     sum1 = sum(group1[i:i + teachersShift])
                     sum2 = sum(group2[i:i + teachersShift])
                     if sum1 * sum2 != 0:
+        groups_list = list(groupTtableDict.values())
+        for i, group1 in enumerate(groups_list):
+            for group2 in groups_list[i+1:]:
+                for j in range(0, len(group1), teachersShift):
+                    sum1 = sum(group1[j:j + teachersShift])
+                    sum2 = sum(group2[j:j + teachersShift])
+                    if sum1 and sum2:
                         violations += 1
 
         return violations
@@ -205,6 +225,7 @@ class TimeTableProblem:
         :return: count of violations found
         """
         violations: int = 0
+        violations = 0
         classroomShift = self.teachersShift # смещение в массиве, соответствующее одной аудитории (т.е. перебор всех учителей)
         oneDayShift    = self.slotsPerDay*self.classroomsShift*self.teachersShift # смещение в массиве, соответствующее одному дню
         oneSlotShift   = self.classroomsShift*self.teachersShift  # смещение в массиве, соответствующее одному занятию
@@ -213,6 +234,9 @@ class TimeTableProblem:
         subjectShift = self.subjectShift
         double_subjectShift = subjectShift * 2
         triple_subjectShift = subjectShift * 3
+
+        # Pre-fetch classrooms to avoid multiple DB queries
+        all_classrooms = list(Classrooms.objects.all())
 
         # iterate over the shifts of each group:
         for group1 in groupTtableDict.values():
@@ -225,12 +249,16 @@ class TimeTableProblem:
                         one_class_lessons = group1[k:k + classroomShift]
                         classroom_id += 1
                         Classroom = Classrooms.objects.get(id=classroom_id)
+                        Classroom = all_classrooms[classroom_id - 1]
                         for m in one_class_lessons:
                             if m< subjectShift and Classroom.lectures != True:
+                            if m and m <= subjectShift and not Classroom.lectures:
                                 violations += 1
                             elif m< double_subjectShift and Classroom.studies != True:
+                            elif m and m <= double_subjectShift and not Classroom.studies:
                                 violations += 1
                             elif m< triple_subjectShift and Classroom.praktical_work != True:
+                            elif m and m <= triple_subjectShift and not Classroom.praktical_work:
                                 violations += 1
 
         return violations
@@ -245,6 +273,9 @@ class TimeTableProblem:
         teacherShift = self.teachersShift
         oneDayShift  = self.slotsPerDay*self.classroomsShift*self.teachersShift
 
+        # Pre-fetch teachers to avoid multiple DB queries
+        all_teachers = list(Teachers.objects.all())
+
         # iterate over the shifts of each group:
         for group in groupTtableDict.values():
             dayNumber = 0
@@ -257,18 +288,25 @@ class TimeTableProblem:
                         Teacher = Teachers.objects.get(id=teacherID)
                         if dayNumber ==1:
                             if group[k] != 0 and Teacher.available_on_monday == False:
+                        Teacher = all_teachers[teacherID - 1]
+                        if group[k] != 0:
+                            if dayNumber == 1 and not Teacher.available_on_monday:
                                 violations += 1
                         elif dayNumber ==2:
                             if group[k] != 0 and Teacher.available_on_tuesday == False:
+                            elif dayNumber == 2 and not Teacher.available_on_tuesday:
                                 violations += 1
                         elif dayNumber == 3:
                             if group[k] != 0 and Teacher.available_on_wednesday == False:
+                            elif dayNumber == 3 and not Teacher.available_on_wednesday:
                                 violations += 1
                         elif dayNumber == 4:
                             if group[k] != 0 and Teacher.available_on_thursday == False:
+                            elif dayNumber == 4 and not Teacher.available_on_thursday:
                                 violations += 1
                         elif dayNumber == 5:
                             if group[k] != 0 and Teacher.available_on_friday == False:
+                            elif dayNumber == 5 and not Teacher.available_on_friday:
                                 violations += 1
 
         return violations
@@ -283,6 +321,9 @@ class TimeTableProblem:
         classroomsShift = self.teachersShift
         oneDayShift     = self.slotsPerDay * self.classroomsShift * self.teachersShift
         oneSlotShift    = self.classroomsShift * self.teachersShift
+
+        # Pre-fetch classrooms to avoid multiple DB queries
+        all_classrooms = list(Classrooms.objects.all())
 
         # iterate over the shifts of each group:
         for group in groupTtableDict.values():
@@ -301,6 +342,10 @@ class TimeTableProblem:
                         ClassRoom = Classrooms.objects.get(id=classRoomID)
                         if dayNumber == 1:
                             if sum1 != 0      and ClassRoom.available_on_monday == False:
+                        sum1 = sum(group[k:k + classroomsShift])
+                        ClassRoom = all_classrooms[classRoomID - 1]
+                        if sum1 != 0:
+                            if dayNumber == 1 and not ClassRoom.available_on_monday:
                                 violations += 1
                             elif dayNumber == 2:
                                 if sum1  != 0 and ClassRoom.available_on_tuesday == False:
@@ -314,6 +359,14 @@ class TimeTableProblem:
                             elif dayNumber == 5:
                                 if sum1  != 0 and ClassRoom.available_on_friday == False:
                                     violations += 1
+                            elif dayNumber == 2 and not ClassRoom.available_on_tuesday:
+                                violations += 1
+                            elif dayNumber == 3 and not ClassRoom.available_on_wednesday:
+                                violations += 1
+                            elif dayNumber == 4 and not ClassRoom.available_on_thursday:
+                                violations += 1
+                            elif dayNumber == 5 and not ClassRoom.available_on_friday:
+                                violations += 1
 
         return violations
 
